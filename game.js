@@ -29,6 +29,19 @@ let coin = null;
 
 const owSound = new Audio('ow.mp3'); // Load the sound file
 
+// Function to set canvas size based on the viewport size
+function setCanvasSize() {
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+}
+
+// Call setCanvasSize function initially and on window resize
+setCanvasSize();
+window.addEventListener('resize', setCanvasSize);
+
+// Rest of your game logic remains unchanged...
+
+
 function createObstacle() {
     const obstacle = {
         x: canvas.width,
@@ -171,3 +184,4 @@ function gameLoop() {
 
 handleInput();
 gameLoop();
+
