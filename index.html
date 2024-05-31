@@ -3,197 +3,25 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Responsive Game</title>
+    <title>Geometry Dash Clone</title>
     <style>
+        body {
+            margin: 0;
+            overflow: hidden;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #000;
+        }
         canvas {
-            border: 1px solid black;
-            display: block;
-            margin: 0 auto;
+            border: 1px solid #fff;
+            background-color: #333;
         }
     </style>
 </head>
 <body>
-    <canvas id="gameCanvas"></canvas>
-    <script>
-        const canvas = document.getElementById('gameCanvas');
-        const ctx = canvas.getContext('2d');
-
-        // Set canvas dimensions based on device width and height
-        canvas.width = window.innerWidth > 600 ? 600 : window.innerWidth;
-        canvas.height = window.innerHeight > 400 ? 400 : window.innerHeight;
-
-        // Load player and obstacle images
-        const playerImage = new Image();
-        playerImage.src = 'path/to/player.png'; // Replace with the path to your player image
-
-        const obstacleImage = new Image();
-        obstacleImage.src = 'path/to/obstacle.png'; // Replace with the path to your obstacle image
-
-        // Define player object
-        const player = {
-            x: 50,
-            y: canvas.height - 50,
-            width: 20,
-            height: 20,
-            dy: 0,
-            gravity: 0.6,
-            jumpPower: -15,
-            grounded: false,
-            jumping: false,
-            scoreEligible: false
-        };
-
-        // Define obstacles array
-        const obstacles = [];
-        let obstacleTimer = 0;
-        const obstacleInterval = 60;
-
-        // Define score and coin variables
-        let score = 0;
-        let coin = null;
-
-        // Define sound
-        const owSound = new Audio('ow.mp3'); // Load the sound file
-
-        // Handle player input
-        function handleInput() {
-            window.addEventListener('keydown', (e) => {
-                if (player.grounded && e.code === 'Space') {
-                    player.dy = player.jumpPower;
-                    player.grounded = false;
-                    player.jumping = true;
-                    player.scoreEligible = true;
-                }
-            });
-        }
-
-        // Update player position and state
-        function updatePlayer() {
-            player.dy += player.gravity;
-            player.y += player.dy;
-
-            if (player.y + player.height >= canvas.height) {
-                player.y = canvas.height - player.height;
-                player.dy = 0;
-                player.grounded = true;
-                player.jumping = false;
-            }
-        }
-
-        // Draw player on the canvas
-        function drawPlayer() {
-            ctx.drawImage(playerImage, player.x, player.y, player.width, player.height);
-        }
-
-        // Update obstacles position and create new ones
-        function updateObstacles() {
-            obstacleTimer++;
-            if (obstacleTimer % obstacleInterval === 0) {
-                createObstacle();
-            }
-            for (let i = obstacles.length - 1; i >= 0; i--) {
-                obstacles[i].x -= 5;
-                if (obstacles[i].x + obstacles[i].width < 0) {
-                    obstacles.splice(i, 1);
-                }
-            }
-        }
-
-        // Create new obstacle
-        function createObstacle() {
-            const obstacle = {
-                x: canvas.width,
-                y: canvas.height - 50,
-                width: 20,
-                height: 20,
-                image: obstacleImage,
-                passed: false
-            };
-            obstacles.push(obstacle);
-        }
-
-        // Draw obstacles on the canvas
-        function drawObstacles() {
-            for (const obstacle of obstacles) {
-                ctx.drawImage(obstacle.image, obstacle.x, obstacle.y, obstacle.width, obstacle.height);
-            }
-        }
-
-        // Update coin position
-        function updateCoin() {
-            if (coin) {
-                coin.x -= 5;
-                if (coin.x + coin.width < 0) {
-                    coin = null; // Remove coin if it goes off-screen
-                }
-            }
-        }
-
-        // Draw coin on the canvas
-        function drawCoin() {
-            if (coin) {
-                ctx.fillStyle = coin.color;
-                ctx.beginPath();
-                ctx.arc(coin.x + coin.width / 2, coin.y + coin.height / 2, coin.width / 2, 0, Math.PI * 2);
-                ctx.fill();
-            }
-        }
-
-        // Draw score on the canvas
-        function drawScore() {
-            ctx.fillStyle = '#fff';
-            ctx.font = '20px Arial';
-            ctx.fillText(`Score: ${score}`, 10, 30);
-        }
-
-        // Check for collisions between player, obstacles, and coins
-        function checkCollisions() {
-            for (const obstacle of obstacles) {
-                if (player.x < obstacle.x + obstacle.width &&
-                    player.x + player.width > obstacle.x &&
-                    player.y < obstacle.y + obstacle.height &&
-                    player.y + player.height > obstacle.y) {
-                    owSound.play(); // Play sound on collision
-                    alert('Game Over');
-                    document.location.reload();
-                }
-
-                if (player.jumping && player.scoreEligible && player.x > obstacle.x + obstacle.width) {
-                    player.scoreEligible = false;
-                    score++;
-                }
-            }
-
-            if (coin &&
-                player.x < coin.x + coin.width &&
-                player.x + player.width > coin.x &&
-                player.y < coin.y + coin.height &&
-                player.y + player.height > coin.y) {
-                score += 10;
-                coin = null; // Remove the coin after collecting
-            }
-        }
-
-        // Main game loop
-        function gameLoop() {
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-            updatePlayer();
-            updateObstacles();
-            updateCoin();
-            checkCollisions();
-
-            drawPlayer();
-            drawObstacles();
-            drawCoin();
-            drawScore();
-
-            requestAnimationFrame(gameLoop);
-        }
-
-        // Start the game
-        handleInput();
-        gameLoop();
-    </script>
+    <canvas id="gameCanvas" width="800" height="400"></canvas>
+    <script src="game.js"></script>
 </body>
 </html>
