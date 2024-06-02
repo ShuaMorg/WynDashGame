@@ -8,13 +8,13 @@ const obstacleImage = new Image();
 obstacleImage.src = 'jj.png'; // Replace with the path to your obstacle image
 
 const player = {
-    x: 50,
-    y: 300,
-    width: 20,
-    height: 20,
+    x: canvas.width * 0.1, // Initial x position scaled with canvas width
+    y: canvas.height * 0.75, // Initial y position scaled with canvas height
+    width: canvas.width * 0.04, // Player width scaled with canvas width
+    height: canvas.width * 0.04, // Player height scaled with canvas width
     dy: 0,
-    gravity: 0.6,
-    jumpPower: -15,
+    gravity: canvas.height * 0.002, // Gravity scaled with canvas height
+    jumpPower: -canvas.height * 0.03, // Jump power scaled with canvas height
     grounded: false,
     jumping: false,
     scoreEligible: false
@@ -22,7 +22,7 @@ const player = {
 
 const obstacles = [];
 let obstacleTimer = 0;
-const obstacleInterval = 60;
+const obstacleInterval = canvas.width * 0.08; // Obstacle interval scaled with canvas width
 
 let score = 0;
 let coin = null;
@@ -33,21 +33,26 @@ const owSound = new Audio('ow.mp3'); // Load the sound file
 function setCanvasSize() {
     canvas.width = window.innerWidth;
     canvas.height = window.innerHeight;
+    // Update player position and size relative to canvas size
+    player.x = canvas.width * 0.1;
+    player.y = canvas.height * 0.75;
+    player.width = canvas.width * 0.04;
+    player.height = canvas.width * 0.04;
+    player.gravity = canvas.height * 0.002;
+    player.jumpPower = -canvas.height * 0.03;
+    obstacleInterval = canvas.width * 0.08;
 }
 
 // Call setCanvasSize function initially and on window resize
 setCanvasSize();
 window.addEventListener('resize', setCanvasSize);
 
-// Rest of your game logic remains unchanged...
-
-
 function createObstacle() {
     const obstacle = {
         x: canvas.width,
-        y: 300,
-        width: 20,
-        height: 20,
+        y: canvas.height * 0.75, // Initial y position scaled with canvas height
+        width: canvas.width * 0.04, // Obstacle width scaled with canvas width
+        height: canvas.width * 0.04, // Obstacle height scaled with canvas width
         image: obstacleImage,
         passed: false
     };
@@ -55,7 +60,7 @@ function createObstacle() {
 
     // Create a coin after the obstacle is created
     if (!coin) {
-        createCoin(obstacle.x + 200); // Coin placed 200px after the obstacle
+        createCoin(obstacle.x + canvas.width * 0.2); // Coin placed 20% of canvas width after the obstacle
     }
 }
 
@@ -65,7 +70,7 @@ function updateObstacles() {
         createObstacle();
     }
     for (let i = obstacles.length - 1; i >= 0; i--) {
-        obstacles[i].x -= 5;
+        obstacles[i].x -= canvas.width * 0.01; // Obstacle speed scaled with canvas width
         if (obstacles[i].x + obstacles[i].width < 0) {
             obstacles.splice(i, 1);
         }
@@ -81,16 +86,16 @@ function drawObstacles() {
 function createCoin(xPosition) {
     coin = {
         x: xPosition,
-        y: 250, // Coin is slightly above the ground
-        width: 15,
-        height: 15,
+        y: canvas.height * 0.6, // Coin y position scaled with canvas height
+        width: canvas.width * 0.03, // Coin width scaled with canvas width
+        height: canvas.width * 0.03, // Coin height scaled with canvas width
         color: '#ffd700'
     };
 }
 
 function updateCoin() {
     if (coin) {
-        coin.x -= 5;
+        coin.x -= canvas.width * 0.01; // Coin speed scaled with canvas width
         if (coin.x + coin.width < 0) {
             coin = null; // Remove coin if it goes off-screen
         }
@@ -135,8 +140,8 @@ function drawPlayer() {
 
 function drawScore() {
     ctx.fillStyle = '#fff';
-    ctx.font = '20px Arial';
-    ctx.fillText(`Score: ${score}`, 10, 30);
+    ctx.font = `${canvas.width * 0.03}px Arial`; // Font size scaled with canvas width
+    ctx.fillText(`Score: ${score}`, canvas.width * 0.02, canvas.height * 0.05); // Position scaled with canvas dimensions
 }
 
 function checkCollisions() {
@@ -184,4 +189,5 @@ function gameLoop() {
 
 handleInput();
 gameLoop();
+
 
